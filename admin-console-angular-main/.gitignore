@@ -1,0 +1,8 @@
+*.pyc
+backend/app/generate_mock_data.py
+backend/app/generate_mock_data.py
+node_modules/
+backend/.env
+backend/app/db.py
+backend/logs/app.log
+backend/app/db.py

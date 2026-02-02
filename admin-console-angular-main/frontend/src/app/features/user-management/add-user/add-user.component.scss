@@ -1,0 +1,254 @@
+$primary-green: #3AAA35;
+$error-red: #dc3545;
+$dark-grey-header: #3C3C3C;
+$edit-icon-grey: #6c757d;
+.user-management-container {
+    padding: 20px 40px;
+    width: 100%;
+}
+
+h2 {
+    color: $primary-green;
+    font-size: 2.5rem;
+    font-weight: 700;
+    border-bottom: none;
+    padding: 0 20px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.add-user-form {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding: 20px;
+    background-color: transparent;
+    border-radius: 8px;
+
+    .form-field-wrapper {
+        flex-grow: 1;
+        min-width: 200px;
+    }
+
+    .form-field {
+        width: 100%;
+
+        .mat-mdc-form-field-wrapper {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .mat-mdc-form-field-flex {
+            padding: 0 !important;
+        }
+
+        .mat-mdc-form-field-label,
+        .mat-mdc-floating-label,
+        .mat-mdc-form-field-placeholder {
+            display: none !important;
+        }
+
+        .mat-mdc-form-field-fieldset,
+        .mdc-notched-outline {
+            border: none !important;
+            background: none !important;
+        }
+
+        .mat-mdc-text-field-wrapper {
+            padding-bottom: 4px;
+            border-bottom: 1px solid #ccc !important;
+            min-height: 20px;
+
+            &.mdc-text-field--focused {
+                border-bottom: 2px solid $primary-green !important;
+                padding-bottom: 3px;
+            }
+        }
+
+        input.mat-mdc-input,
+        .mat-mdc-select-trigger {
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            font-weight: 400;
+            color: #343a40;
+        }
+
+        .mat-mdc-form-field-subscript-wrapper {
+            padding-left: 0;
+            margin-top: 2px;
+            min-height: 18px;
+        }
+    }
+
+    .role-select-wrapper {
+        min-width: 150px;
+    }
+
+    .static-input-label {
+        display: block;
+        color: #6a6a6a;
+        font-size: 1rem;
+        margin-bottom: 2px;
+    }
+
+    .required-asterisk {
+        color: $error-red;
+        margin-left: 2px;
+        font-weight: bold;
+    }
+
+    .add-user-button {
+        height: 40px;
+        background-color: $primary-green !important;
+        color: #fff !important;
+        margin-top: 20px;
+
+        &:disabled {
+            background-color: lighten($primary-green, 20%) !important;
+        }
+    }
+}
+
+.table-container {
+    overflow-x: auto;
+    position: relative;
+    border: none;
+    padding: 0 20px;
+
+    .loading-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+
+    .mat-mdc-header-row {
+        background-color: $dark-grey-header;
+        color: white;
+        font-weight: 600;
+    }
+}
+
+.mat-table {
+    width: 100%;
+    min-width: 800px;
+}
+
+.mat-row {
+    &:nth-child(even) {
+        background-color: #fcfcfc;
+    }
+}
+
+.mat-cell {
+    padding-right: 8px;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.password-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.password-toggle {
+    cursor: pointer;
+    font-size: 18px;
+    color: #6c757d;
+
+    &:hover {
+        color: #000;
+    }
+}
+
+.action-buttons {
+    display: flex;
+    gap: 4px;
+
+    button.mat-icon-button {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        padding: 0;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+
+        &:hover {
+            opacity: 0.8;
+            transform: scale(1.1);
+            transition: transform 0.1s ease;
+        }
+    }
+
+    .edit-icon {
+        color: $edit-icon-grey;
+    }
+
+    .save-icon {
+        color: $primary-green;
+    }
+
+    .delete-icon {
+        color: $error-red;
+    }
+
+    .cancel-icon {
+        color: $error-red;
+    }
+}
+
+.inline-edit-field {
+    width: 100%;
+
+    .mat-mdc-form-field-flex {
+        padding: 0 4px !important;
+    }
+
+    .mat-mdc-form-field-infix {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        min-height: 48px;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+    }
+}
+
+@media (max-width: 992px) {
+    .add-user-form {
+        flex-wrap: wrap;
+
+        .form-field-wrapper {
+            flex-basis: 45%;
+        }
+
+        .add-user-button {
+            flex-basis: 100%;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .add-user-form {
+        flex-direction: column;
+
+        .form-field-wrapper {
+            flex-basis: 100%;
+            min-width: 100%;
+        }
+    }
+}

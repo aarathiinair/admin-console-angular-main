@@ -1,0 +1,237 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Advent Pro", "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// Ensure consistency across browsers in password field visibility toggle icon
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+
+$primary-blue: #215e98;
+$dark-gray: #495057;
+$header-height: 60px;
+$sidebar-width: 20%;
+
+.main-content-layout {
+  position: absolute;
+  top: $header-height;
+  left: $sidebar-width;
+
+  // Dimensions to cover the remaining space
+  width: calc(100% - #{$sidebar-width});
+  height: calc(100vh - #{$header-height});
+
+  // Scrolling and Background
+  overflow-y: auto;
+  background-color: #fff;
+
+  // Add internal padding so content isn't flush with the edges
+  padding: 20px 40px;
+}
+
+.custom-tooltip {
+  background-color: #333333;
+  color: #ffffff;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+  max-width: 300px;
+  white-space: normal;
+  opacity: 1;
+}
+
+.mdc-tooltip,
+.mat-mdc-tooltip {
+  background-color: #333333 !important;
+  color: #ffffff !important;
+  font-size: 0.85rem !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  max-width: 300px !important;
+  white-space: normal !important;
+  opacity: 1 !important;
+}
+
+
+.trigger-dialog-panel {
+  background-color: #fff !important;
+  opacity: 1 !important;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 4px !important;
+  z-index: 1000 !important;
+
+  .mat-select-content {
+    background-color: #fff !important;
+  }
+
+  .mat-option {
+    color: $dark-gray;
+    font-size: 0.85rem;
+    padding: 0 16px;
+    height: 36px;
+
+    &.mat-selected:not(.mat-option-multiple) {
+      background-color: rgba($primary-blue, 0.1) !important;
+      color: $primary-blue !important;
+    }
+
+    .mat-option-text {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+
+.trigger-filter-panel {
+  background-color: #fff !important;
+  opacity: 1 !important;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 4px !important;
+  z-index: 1000 !important;
+
+  .mat-select-content {
+    background-color: #fff !important;
+  }
+
+  .mat-option {
+    color: #495057;
+    font-size: 0.85rem;
+    padding: 0 16px;
+    height: 36px;
+
+    &.mat-selected:not(.mat-option-multiple) {
+      background-color: rgba(#215e98, 0.1) !important;
+      color: #215e98 !important;
+    }
+
+    .mat-option-text {
+      display: flex;
+      align-items: center;
+    }
+
+    .mat-pseudo-checkbox {
+      display: none;
+    }
+  }
+}
+
+:host ::ng-deep .trigger-filter-panel {
+  background-color: #fff !important;
+  opacity: 1 !important;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 4px !important;
+  z-index: 1000 !important;
+
+  .mat-select-content {
+    background-color: #fff !important;
+  }
+
+  .mat-option {
+    color: #495057;
+    font-size: 0.85rem;
+    padding: 0 16px;
+    height: 36px;
+
+    &.mat-selected:not(.mat-option-multiple) {
+      background-color: rgba(#215e98, 0.1) !important;
+      color: #215e98 !important;
+    }
+
+    .mat-option-text {
+      display: flex;
+      align-items: center;
+    }
+
+    .mat-pseudo-checkbox {
+      display: none;
+    }
+  }
+
+  .cdk-overlay-pane {
+    .trigger-filter-panel {
+
+      // Ensure the container itself is solid white
+      .mat-select-panel {
+        background-color: #fff !important;
+        opacity: 1 !important;
+      }
+    }
+  }
+}
+
+.mat-datepicker-content,
+.mat-select-panel {
+  background-color: #ffffff !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+  z-index: 1001 !important;
+}
+
+.mat-sort-header-container:not(.mat-sort-header-sorted) .mat-sort-header-arrow {
+  opacity: 0.5 !important;
+  transform: translateY(0) !important;
+  color: #6c757d !important;
+}
+
+.mat-mdc-select-panel {
+  background-color: #fff !important;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 4px !important;
+}
+
+.mat-mdc-form-field-infix {
+  padding: 5px;
+}
+
+.app-button.mat-mdc-button,
+.app-button.mat-mdc-unelevated-button,
+.app-button.mat-mdc-raised-button {
+  height: 40px !important;
+  min-width: 120px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 4px !important;
+  text-transform: uppercase !important;
+  padding: 0 16px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.app-button mat-icon {
+  font-size: 18px !important;
+  height: 18px !important;
+  width: 18px !important;
+}
+
+.mat-mdc-form-field-error {
+  color: red !important;
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: white;
+}
+
+.mat-mdc-simple-snack-bar {
+  background-color: #3C3C3C;
+  color: white;
+}
+
+.mat-mdc-snackbar-surface {
+  padding: 0 !important;
+}

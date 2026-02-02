@@ -1,0 +1,12 @@
+<app-header 
+  [isSidebarOpen]="isSidebarOpen"
+  (sidebarToggled)="toggleSidebar()"
+></app-header>
+ 
+<div class="main-layout" [class.sidebar-closed]="!isSidebarOpen">
+  <app-sidebar *ngIf="isSidebarOpen"></app-sidebar>
+  
+  <main class="content-area">
+    <router-outlet></router-outlet>
+  </main>
+</div>

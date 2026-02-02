@@ -1,0 +1,115 @@
+$primary-green: #3AAA35;
+$error-red: #dc3545;
+$text-color: #343a40;
+$dark-grey: #3C3C3C;
+
+.mat-mdc-dialog-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: $primary-green;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.dialog-content {
+  padding-top: 20px !important;
+  overflow-x: hidden; // Prevent horizontal scroll from radio group
+}
+
+.trigger-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 25px;
+  align-items: end; // Align items to the bottom of the grid cell
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+mat-form-field {
+  width: 100%;
+  ::v-deep .mat-mdc-text-field-wrapper {
+    background-color: transparent !important;
+    border-bottom: 1px solid #ccc !important;
+    &.mdc-text-field--focused {
+      border-bottom: 2px solid $primary-green !important;
+    }
+  }
+}
+
+// Fixed Radio Button Alignment
+.radio-field-wrapper {
+  display: flex;
+  align-items: center; // Vertically centers radio buttons with the input line
+  position: relative;
+  height: 56px; 
+  padding-bottom: 4px;
+  white-space: nowrap; // Prevents splitting into 2 rows
+
+  .floating-style-label {
+    position: absolute;
+    top: -8px; 
+    left: 0;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.6);
+    background: white;
+    padding: 0 4px;
+    z-index: 1;
+  }
+
+  .radio-group {
+    display: flex;
+    flex-direction: row; // Force horizontal
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    
+    ::v-deep .mdc-form-field {
+      margin-right: 0;
+    }
+
+    ::v-deep .mdc-label {
+      font-size: 14px;
+      color: $text-color;
+      padding-left: 4px;
+    }
+  }
+}
+
+.error-box {
+  grid-column: span 2;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+  border: 1px solid #f5c6cb;
+}
+
+.dialog-save-button {
+  background-color: $primary-green !important;
+  color: #fff !important;
+  height: 40px;
+  min-width: 120px;
+  &:hover:not(:disabled) {
+    background-color: darken($primary-green, 5%) !important;
+  }
+  &:disabled {
+    background-color: #a5d6a7 !important; // Lighter green for disabled state
+    color: rgba(255, 255, 255, 0.8) !important;
+    cursor: not-allowed;
+  }
+}
+
+.dialog-cancel-button {
+  background-color: #e9ecef !important;
+  color: #495057 !important;
+  height: 40px;
+  min-width: 100px;
+  margin-right: 10px;
+  &:hover {
+    background-color: darken(#e9ecef, 5%) !important;
+  }
+}

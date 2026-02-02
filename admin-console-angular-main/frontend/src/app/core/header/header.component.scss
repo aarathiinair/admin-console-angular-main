@@ -1,0 +1,251 @@
+$header-height: 60px;
+$primary-blue: #215e98;
+$left-width: 20%;
+$left-bg-color: #3C3C3C;
+$right-bg-color: #EEEEEE;
+$primary-green: #3AAA35;
+ 
+.app-header {
+  height: $header-height;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  width: $left-width;
+  background-color: $left-bg-color;
+  padding: 0 20px;
+  color: white;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: calc(100% - #{$left-width});
+  background-color: $right-bg-color;
+  color: #333;
+  padding: 0 20px;
+}
+ 
+.app-logo {
+  height: 40px;
+  object-fit: contain;
+  margin-right: 15px;
+}
+ 
+.icon-button {
+  cursor: pointer;
+  margin-right: 15px;
+  font-size: 24px;
+  color: inherit;
+}
+
+.notification-container {
+  margin-right: 10px;
+  .icon-button {
+    margin-right: 0;
+    padding-top: 5px;
+    color: #333;
+  }
+}
+ 
+.profile-menu-container {
+  position: relative;
+}
+
+.user-profile-display {
+  .user-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 0; 
+  }
+
+  .user-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+}
+ 
+.profile-dropdown {
+  position: absolute;
+  top: $header-height - 10px;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: none;
+  flex-direction: column;
+  min-width: 170px;
+  max-width: 200px;
+  z-index: 1001; 
+  overflow: hidden; 
+ 
+  &.open {
+    display: flex;
+  }
+ 
+  button {
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333;
+    transition: background-color 0.2s;
+ 
+    &:hover {
+      background-color: #f0f0f0;
+    }
+  }
+}
+
+.notification-dropdown {
+  right: -5px; 
+  min-width: 300px; 
+  max-width: 400px;
+  color: #333;
+ 
+  .dropdown-header {
+    padding: 10px 15px;
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+    background-color: #f7f7f7;
+  }
+ 
+  .notification-list {
+    max-height: 300px; 
+    overflow-y: auto;
+  }
+  
+  .notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+ 
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .notification-content {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+ 
+    .message {
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+ 
+    .time {
+      font-size: 0.75rem;
+      color: #777;
+      margin-top: 2px;
+    }
+    
+    .dismiss-button {
+      flex-shrink: 0;
+      padding: 5px;
+      margin: 0;
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+ 
+      &:hover {
+        color: #333;
+        background-color: transparent;
+      }
+      
+      mat-icon {
+        font-size: 16px;
+      }
+    }
+  }
+  
+  .no-notifications {
+    padding: 20px 15px;
+    text-align: center;
+    color: #777;
+  }
+}
+
+/* Add these to your existing SCSS file */
+
+.health-dropdown {
+  right: 0;
+  min-width: 250px;
+
+  .health-list {
+    padding: 10px 0;
+  }
+
+  .health-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .service-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #333;
+    }
+  }
+
+  .status-indicator {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+
+    &.running {
+      background-color: rgba(58, 170, 53, 0.1);
+      color: #3AAA35; // $primary-green
+    }
+
+    &.restarting {
+      background-color: rgba(255, 193, 7, 0.1);
+      color: #FFC107; // Yellow
+    }
+
+    &.stopped {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: #F44336; // Red
+    }
+  }
+}
+
+.health-icon {
+  color: #333;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: $primary-blue;
+  }
+}

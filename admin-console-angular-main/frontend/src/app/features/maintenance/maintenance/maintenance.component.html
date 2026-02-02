@@ -1,0 +1,214 @@
+<app-image-banner></app-image-banner>
+<div class="maintenance-container">
+    
+    <div class="header-with-action">
+        <h2>{{ isEditing ? 'Edit Maintenance' : (isAdding ? 'Add New Maintenance' : 'Ongoing Maintenances') }}</h2>
+        <button *ngIf="!isAdding && !isEditing" mat-raised-button color="primary" class="add-button" (click)="startAddMaintenance()">
+            ADD
+        </button>
+    </div>
+
+    <!-- FILTER BAR SECTION -->
+    <div class="filter-section" *ngIf="!isAdding && !isEditing">
+        <div class="filter-controls">
+            <button mat-icon-button class="filter-trigger-btn" (click)="filterSelect.open(); $event.stopPropagation()" matTooltip="Filter by Group" [matTooltipClass]="'custom-tooltip'">
+                <mat-icon>filter_list</mat-icon>
+            </button>
+
+            <!-- Active Filter Tags (Chips) -->
+            <div class="filter-chips" *ngIf="selectedGroupFilters.length > 0">
+                <div class="chip" *ngFor="let group of selectedGroupFilters">
+                    <span>{{ group }}</span>
+                    <mat-icon class="chip-remove" (click)="removeFilter(group)">close</mat-icon>
+                </div>
+                <button mat-button class="clear-all-btn" (click)="clearAllFilters()" *ngIf="selectedGroupFilters.length > 1">
+                    Clear All
+                </button>
+            </div>
+        </div>
+
+        <mat-form-field appearance="fill" class="hidden-filter-field" subscriptSizing="dynamic">
+            <mat-select
+                #filterSelect
+                multiple
+                [(ngModel)]="selectedGroupFilters"
+                (selectionChange)="onFilterChange()"
+                panelClass="filter-select-panel filter-select-panel-pane"
+            >
+                <div class="select-all-container">
+                    <mat-checkbox color="primary"
+                                [checked]="isAllFiltersSelected"
+                                [indeterminate]="isPartialFiltersSelected"
+                                (change)="toggleSelectAllFilters($event)">
+                        Select all
+                    </mat-checkbox>
+                </div>
+                <mat-option *ngFor="let group of filterOptions" [value]="group">{{ group }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div *ngIf="isAdding || isEditing" class="maintenance-form-wrapper">
+        <form [formGroup]="maintenanceForm" (ngSubmit)="saveMaintenance()">
+
+            <div class="form-grid">
+                
+                <div class="form-field-wrapper">
+                    <label class="static-input-label">Server Group <span class="required-asterisk">*</span></label>
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                        <mat-select formControlName="serverGroup" required placeholder="Select Group">
+                            <mat-option *ngFor="let group of serverGroups" [value]="group">{{ group }}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="maintenanceForm.get('serverGroup')?.hasError('required') && maintenanceForm.get('serverGroup')?.touched">
+                            Group is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                
+                <div class="form-field-wrapper" *ngIf="isOtherGroupSelected">
+                    <label class="static-input-label">Other Server Name <span class="required-asterisk">*</span></label>
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                        <input matInput formControlName="otherServer" required placeholder="Enter server name/desc">
+                        <mat-error *ngIf="maintenanceForm.get('otherServer')?.hasError('required') && maintenanceForm.get('otherServer')?.touched">
+                            Required when 'Other' is selected
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field-wrapper" [ngClass]="{'span-full': isOtherGroupSelected}" *ngIf="!isOtherGroupSelected">
+                    <label class="static-input-label">Servers <span class="required-asterisk">*</span></label>
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                        <mat-select formControlName="servers" multiple placeholder="Select Servers" panelClass="server-select-panel">
+                            <div class="select-all-container">
+                                <mat-checkbox color="primary"
+                                              [checked]="isAllSelected"
+                                              [indeterminate]="isPartiallySelected"
+                                              (change)="toggleSelectAll($event)">
+                                    Select all
+                                </mat-checkbox>
+                            </div>
+                            <mat-option *ngFor="let server of availableServers" [value]="server">{{ server }}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="maintenanceForm.get('servers')?.hasError('required') && maintenanceForm.get('servers')?.touched">
+                            At least one server is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field-wrapper span-full"> 
+                    <label class="static-input-label">Add Comments</label>
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                        <input matInput formControlName="comments">
+                    </mat-form-field>
+                </div>
+ 
+                <div class="form-field-wrapper">
+                    <label class="static-input-label">Start Date (UTC) <span class="required-asterisk">*</span></label>
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                        <input matInput [matDatepicker]="startPicker" formControlName="startDate" required>
+                        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                
+                <div class="form-field-wrapper">
+                    <label class="static-input-label">End Date (UTC) <span class="required-asterisk">*</span></label>
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                        <input matInput [matDatepicker]="endPicker" formControlName="endDate" required>
+                        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #endPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+ 
+                <div class="form-field-wrapper">
+                    <label class="static-input-label">Start Time (UTC) <span class="required-asterisk">*</span></label>
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                        <input matInput type="time" formControlName="startTime" required>
+                        <mat-icon matSuffix>schedule</mat-icon>
+                    </mat-form-field>
+                </div>
+ 
+                <div class="form-field-wrapper">
+                    <label class="static-input-label">End Time (UTC) <span class="required-asterisk">*</span></label>
+                    <mat-form-field appearance="outline" class="custom-form-field">
+                        <input matInput type="time" formControlName="endTime" required>
+                        <mat-icon matSuffix>schedule</mat-icon>
+                    </mat-form-field>
+                </div>
+            </div>
+ 
+            <div class="actions-row form-actions three-button-group">
+                <button mat-raised-button class="reset-button" type="button" (click)="resetForm()">
+                    Reset
+                </button>
+                <button mat-raised-button class="cancel-downtime-button" type="button" *ngIf="isEditing" (click)="cancelEdit()">
+                    Cancel
+                </button>
+                <button mat-raised-button class="cancel-add-button" type="button" *ngIf="isAdding" (click)="cancelAdd()">
+                    Cancel
+                </button>
+                <button mat-raised-button color="primary" class="save-button" type="submit" [disabled]="maintenanceForm.invalid || isLoading">
+                    <mat-icon *ngIf="!isLoading">save</mat-icon> 
+                    <mat-progress-spinner *ngIf="isLoading" [diameter]="20" mode="indeterminate" class="spinner-inline"></mat-progress-spinner>
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+ 
+    <div *ngIf="!isAdding && !isEditing" class="mat-elevation-z8 maintenance-table-container">
+        <mat-table [dataSource]="dataSource" matSort>
+ 
+            <!-- UPDATED SERVER DISPLAY COLUMN -->
+            <ng-container matColumnDef="server_group_display">
+                <mat-header-cell *matHeaderCellDef>Server Details</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-weight: 500;">{{ row.server_group }}</span>
+                        <span style="font-size: 0.85em; color: #666;">
+                            {{ row.server_name || row.other_server }}
+                        </span>
+                    </div>
+                </mat-cell>
+            </ng-container>
+ 
+            <ng-container matColumnDef="start_datetime">
+                <mat-header-cell *matHeaderCellDef>Start Date and Time</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.start_datetime | date: 'dd/MM/yyyy HH:mm' : 'UTC' }} UTC</mat-cell>
+            </ng-container>
+ 
+            <ng-container matColumnDef="end_datetime">
+                <mat-header-cell *matHeaderCellDef>End Date and Time</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.end_datetime | date: 'dd/MM/yyyy HH:mm' : 'UTC' }} UTC</mat-cell>
+            </ng-container>
+            
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <span class="status-chip" [ngClass]="row.status | lowercase">{{ row.status }}</span>
+                </mat-cell>
+            </ng-container>
+ 
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <div class="action-buttons">
+                        <button mat-icon-button class="edit-icon" (click)="startEditMaintenance(row)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button class="delete-icon" (click)="openDeleteDialog(row)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </mat-cell>
+            </ng-container>
+ 
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            
+        </mat-table>
+        <mat-paginator [length]="totalRows" [pageSize]="currentPageSize" [pageSizeOptions]="[5, 10, 20]"
+            (page)="handlePageChange($event)" showFirstLastButtons >
+        </mat-paginator>
+    </div>
+</div>

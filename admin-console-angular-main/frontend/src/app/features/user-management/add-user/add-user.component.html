@@ -1,0 +1,132 @@
+<app-image-banner></app-image-banner>
+<div class="user-management-container">
+    <h2>Add & Manage Users</h2>
+ 
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="add-user-form"
+        [class.disabled-form]="currentUserRole !== 'Super Admin'">
+        
+        <div class="form-field-wrapper">
+            <label class="static-input-label">Username <span class="required-asterisk">*</span></label>
+            <mat-form-field appearance="outline" class="form-field">
+                <input matInput formControlName="username" required [readonly]="currentUserRole !== 'Super Admin'">
+                <mat-error *ngIf="userForm.get('username')?.hasError('required') && (userForm.get('username')?.touched || userForm.get('username')?.dirty)">Username is required</mat-error>
+            </mat-form-field>
+        </div>
+ 
+        <div class="form-field-wrapper">
+            <label class="static-input-label">Email <span class="required-asterisk">*</span></label>
+            <mat-form-field appearance="outline" class="form-field">
+                <input matInput formControlName="email_id" required [readonly]="currentUserRole !== 'Super Admin'">
+                <mat-error *ngIf="userForm.get('email_id')?.hasError('required') && (userForm.get('email_id')?.touched || userForm.get('email_id')?.dirty)">Email is required</mat-error>
+                <mat-error *ngIf="userForm.get('email_id')?.hasError('email')">Invalid email format</mat-error>
+            </mat-form-field>
+        </div>
+ 
+        <div class="form-field-wrapper role-select-wrapper">
+            <label class="static-input-label">Role <span class="required-asterisk">*</span></label>
+            <mat-form-field appearance="outline" class="form-field role-select">
+                <mat-select formControlName="role" required [disabled]="currentUserRole !== 'Super Admin'">
+                    <mat-option *ngFor="let role of roles" [value]="role">{{ role }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+ 
+        <button mat-raised-button color="primary" type="submit" class="add-user-button"
+            [disabled]="userForm.invalid || isLoading || currentUserRole !== 'Super Admin'">
+            <mat-icon>person_add</mat-icon> ADD USER
+        </button>
+    </form>
+    
+    <div class="table-container mat-elevation-z8">
+        <mat-table [dataSource]="dataSource" matSort (matSortChange)="sort.direction">
+            
+            <ng-container matColumnDef="username">
+                <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.username }}</mat-cell>
+            </ng-container>
+ 
+            <ng-container matColumnDef="plain_password">
+                <mat-header-cell *matHeaderCellDef>Password</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <span class="password-field">
+                        <span *ngIf="!row.isPasswordVisible">••••••</span>
+                        <span *ngIf="row.isPasswordVisible">{{ row.plain_password }}</span>
+                        <mat-icon class="password-toggle" (click)="togglePasswordVisibility(row)">
+                            {{ row.isPasswordVisible ? 'visibility_off' : 'visibility' }}
+                        </mat-icon>
+                    </span>
+                </mat-cell>
+            </ng-container>
+            
+            <ng-container matColumnDef="email_id">
+                <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <ng-container *ngIf="!row.isEditing || !canEditEmail(row)">
+                        {{ row.email_id }}
+                    </ng-container>
+                    <mat-form-field *ngIf="row.isEditing && canEditEmail(row)" appearance="outline" class="inline-edit-field">
+                        <input matInput [(ngModel)]="row.editEmail" name="editEmail" required>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+ 
+            <ng-container matColumnDef="role">
+                <mat-header-cell *matHeaderCellDef>Role</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    
+                    <ng-container *ngIf="!row.isEditing">
+                        {{ row.role }}
+                    </ng-container>
+                    
+                    <mat-form-field *ngIf="row.isEditing && canEditRole(row)" appearance="outline" class="inline-edit-field">
+                        <mat-select [(ngModel)]="row.editRole" name="editRole">
+                            <mat-option *ngFor="let role of roles" [value]="role">{{ role }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    
+                    <ng-container *ngIf="row.isEditing && !canEditRole(row)">
+                        <span class="locked-role-value">{{ row.role }}</span>
+                    </ng-container>
+ 
+                </mat-cell>
+            </ng-container>
+            
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <div class="action-buttons">
+                        
+                        <button *ngIf="!row.isEditing && canEditEmail(row)" mat-icon-button class="edit-icon" (click)="startEdit(row)" [disabled]="isLoading">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        
+                        <button *ngIf="row.isEditing" mat-icon-button class="save-icon" (click)="saveEdit(row)" [disabled]="isLoading">
+                            <mat-icon>check</mat-icon>
+                        </button>
+                        
+                        <button *ngIf="!row.isEditing && currentUserRole === 'Super Admin'" mat-icon-button class="delete-icon" (click)="openDeleteDialog(row)" [disabled]="isLoading">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                        
+                        <button *ngIf="row.isEditing" mat-icon-button class="cancel-icon" (click)="cancelEdit(row)" [disabled]="isLoading">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                        
+                    </div>
+                </mat-cell>
+            </ng-container>
+ 
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+ 
+            <ng-container *matNoDataRow>
+                <mat-row *ngIf="!isLoading">
+                    <td [attr.colspan]="displayedColumns.length" class="mat-cell mat-row-no-data">No users found.</td>
+                </mat-row>
+            </ng-container>
+ 
+        </mat-table>
+ 
+        <mat-spinner *ngIf="isLoading" diameter="40" class="loading-spinner"></mat-spinner>
+    </div>
+</div>

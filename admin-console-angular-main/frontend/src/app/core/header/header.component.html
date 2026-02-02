@@ -1,0 +1,94 @@
+<header class="app-header">
+
+  <div class="left-section">
+    <mat-icon class="icon-button menu-icon" (click)="toggleSidebar()">
+      {{ isSidebarOpen ? 'menu' : 'menu' }}
+    </mat-icon>
+    <img src="../../../assets/Bitzer.png" alt="Bitzer" class="app-logo">
+  </div>
+
+  <div class="right-section">
+
+    <div class="notification-container profile-menu-container">
+      <mat-icon 
+        class="icon-button health-icon" 
+        (click)="toggleHealthCheck()"
+        title="System Health"
+      >
+        monitor_heart
+      </mat-icon>
+
+      <div 
+        class="profile-dropdown notification-dropdown health-dropdown" 
+        [class.open]="isHealthCheckOpen"
+        (mouseleave)="isHealthCheckOpen = false"
+      >
+        <div class="dropdown-header">System Health Status</div>
+        
+        <div class="notification-list">
+          <div *ngFor="let service of healthServices" class="notification-item health-item">
+            <div class="notification-content">
+              <span class="message"><strong>{{ service.name }}</strong></span>
+            </div>
+            <span class="status-badge" [ngClass]="service.status.toLowerCase()">
+              {{ service.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notification-container profile-menu-container">
+      <mat-icon 
+        class="icon-button notification-icon" 
+        (click)="toggleNotifications()"
+        [matBadge]="notifications.length"
+        matBadgeColor="warn"
+        matBadgeSize="small"
+        matBadgeOverlap="false"
+      >
+        notifications
+      </mat-icon>
+
+      <div 
+        class="profile-dropdown notification-dropdown" 
+        [class.open]="isNotificationsOpen"
+        (mouseleave)="isNotificationsOpen = false"
+      >
+        <div class="dropdown-header">Notifications ({{ notifications.length }})</div>
+        
+        <div *ngIf="notifications.length > 0" class="notification-list">
+          <div *ngFor="let notification of notifications" class="notification-item">
+            <div class="notification-content">
+              <span class="message">{{ notification.message }}</span>
+              <span class="time">{{ notification.timeAgo }}</span>
+            </div>
+            <button class="dismiss-button" (click)="dismissNotification(notification.id)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="notifications.length === 0" class="no-notifications">
+          You have no new notifications.
+        </div>
+      </div>
+    </div>
+    
+    <div class="profile-menu-container user-profile-display">
+      <div class="user-info profile-trigger" (click)="toggleProfileMenu()">
+        <mat-icon class="user-icon">account_circle</mat-icon>
+      </div>
+
+      <div 
+        class="profile-dropdown" 
+        [class.open]="isProfileMenuOpen"
+        (mouseleave)="isProfileMenuOpen = false"
+      >
+        <button (click)="changePassword()">Change Password</button>
+        <button (click)="logout()">Logout</button>
+      </div>
+    </div>
+
+  </div>
+</header>

@@ -1,0 +1,42 @@
+$sidebar-width: 20%;
+$header-height: 60px;
+$sidebar-transition: 0.3s ease-out;
+ 
+.main-layout {
+  height: 100vh;
+  padding-top: $header-height;
+}
+ 
+app-sidebar {
+  position: fixed;
+  top: $header-height;
+  left: 0;
+  width: $sidebar-width;
+  height: calc(100vh - #{$header-height});
+  transition: transform $sidebar-transition;
+  z-index: 998;
+}
+ 
+.content-area {
+  position: absolute; 
+  top: $header-height;
+  left: $sidebar-width;
+
+  width: calc(100% - #{$sidebar-width});
+  height: calc(100vh - #{$header-height});
+  
+  background-color: #fff; 
+  transition: left $sidebar-transition, width $sidebar-transition;
+  overflow-y: auto;
+}
+ 
+.sidebar-closed {
+  .content-area {
+    left: 0;
+    width: 100%;
+  }
+}
+
+.sidebar-closed app-sidebar {
+  transform: translateX(-100%);
+}

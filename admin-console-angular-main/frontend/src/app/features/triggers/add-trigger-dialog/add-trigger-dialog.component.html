@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Trigger' : 'Add New Trigger' }}</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="triggerForm" class="trigger-form">
+    
+    <div *ngIf="errorMessage" class="error-box">
+      {{ errorMessage }}
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Trigger Name</mat-label>
+      <input matInput formControlName="trigger_name" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <input matInput formControlName="category" required>
+    </mat-form-field>
+
+    <div class="radio-field-wrapper">
+      <label class="floating-style-label">Actionable*</label>
+      <mat-radio-group formControlName="actionable" class="radio-group">
+        <mat-radio-button *ngFor="let option of actionableOptions" [value]="option">
+          {{ option }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <mat-form-field appearance="outline" *ngIf="triggerForm.get('actionable')?.value === 'Actionable'">
+      <mat-label>Priority</mat-label>
+      <mat-select formControlName="priority" required> 
+        <mat-option *ngFor="let option of priorityOptions" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" [class.full-width]="triggerForm.get('actionable')?.value === 'Informational'">
+      <mat-label>Team</mat-label>
+      <input matInput formControlName="team">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Department</mat-label>
+      <input matInput formControlName="department">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Responsible Persons</mat-label>
+      <input matInput formControlName="responsible_persons">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Recommended Action</mat-label>
+      <textarea matInput formControlName="recommended_action" rows="3"></textarea>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" class="dialog-cancel-button">CANCEL</button>
+  <button mat-flat-button 
+          class="dialog-save-button"
+          [disabled]="triggerForm.invalid || !!errorMessage"
+          (click)="onSave()">
+    {{ isEditMode ? 'SAVE CHANGES' : 'ADD' }}
+  </button>
+</mat-dialog-actions>

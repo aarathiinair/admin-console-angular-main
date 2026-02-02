@@ -1,0 +1,81 @@
+<app-image-banner></app-image-banner>
+<div class="report-container">
+    
+    <div class="source-selection-row">
+        <h2>Data Report Generation</h2>
+        
+        <mat-form-field appearance="outline" class="source-dropdown">
+            <mat-label>Select Data Source</mat-label>
+            <mat-select [value]="selectedSource" (selectionChange)="onSourceChange($event.value)">
+                <mat-option *ngFor="let src of availableSources" [value]="src">
+                    {{ src }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="divider" *ngIf="selectedSource"></div>
+
+    <ng-container *ngIf="selectedSource === 'Certificate Watcher'">
+        <app-certificate-report></app-certificate-report>
+    </ng-container>
+
+    <ng-container *ngIf="selectedSource === 'ControlUp'">
+        <div class="control-up-view">
+             <form [formGroup]="reportForm" (ngSubmit)="fetchReportData()">
+                <div class="filters-grid">
+                    <div class="form-field-wrapper">
+                         <label class="static-input-label">Start Date*</label>
+                         <mat-form-field appearance="outline" class="custom-form-field">
+                             <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+                             <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                             <mat-datepicker #startPicker></mat-datepicker>
+                         </mat-form-field>
+                    </div>
+                    <div class="form-field-wrapper">
+                         <label class="static-input-label">Start Time*</label>
+                         <mat-form-field appearance="outline" class="custom-form-field">
+                             <input matInput type="time" formControlName="startTime">
+                         </mat-form-field>
+                    </div>
+                     <div class="form-field-wrapper">
+                        <label class="static-input-label">Filter by Type</label>
+                        <mat-form-field appearance="outline" class="custom-form-field">
+                            <mat-select formControlName="filterType">
+                                <mat-option [value]="null">All</mat-option>
+                                <mat-option *ngFor="let t of filterTypes" [value]="t">{{t}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    </div>
+
+                <div class="actions-row">
+                    <button mat-raised-button color="primary" type="submit" class="fetch-button">
+                        <mat-icon>search</mat-icon> Fetch
+                    </button>
+                    <button mat-raised-button color="accent" type="button" class="download-button" (click)="onDownloadReport()">
+                         <mat-icon>download</mat-icon> Download
+                    </button>
+                </div>
+             </form>
+
+             <div class="mat-elevation-z8 report-table">
+                 <mat-table [dataSource]="dataSource" matSort (matSortChange)="handleSortChange($event)">
+                     <ng-container matColumnDef="received_at">
+                         <mat-header-cell *matHeaderCellDef mat-sort-header>Received At</mat-header-cell>
+                         <mat-cell *matCellDef="let row">{{row.received_at | date:'short'}}</mat-cell>
+                     </ng-container>
+                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                 </mat-table>
+                 <mat-paginator [length]="totalRows" [pageSize]="currentPageSize" (page)="handlePageChange($event)"></mat-paginator>
+             </div>
+        </div>
+    </ng-container>
+
+    <div *ngIf="!selectedSource" class="empty-state">
+        <mat-icon class="large-icon">bar_chart</mat-icon>
+        <p>Please select a <strong>Data Source</strong> from the dropdown above to generate a report.</p>
+    </div>
+
+</div>

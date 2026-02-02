@@ -1,0 +1,50 @@
+<header>
+  <img src="../../../../assets/Bitzer.png" alt="Bitzer" class="app-logo">
+</header>
+<div class="login-container">
+  <div class="login-box">
+    <h2 class="login-title">Admin Console Login</h2>
+ 
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+ 
+      <div *ngIf="errorMessage" class="error-message-box">
+        {{ errorMessage }}
+      </div>
+ 
+      <div class="custom-input-group">
+        <label class="static-label" for="username-input">Username</label>
+        <mat-form-field appearance="outline" class="login-field input-no-suffix">
+          <input matInput formControlName="username" id="username-input" required>
+        </mat-form-field>
+        <mat-error *ngIf="loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched" class="custom-error">
+          Username is required.
+        </mat-error>
+      </div>
+ 
+      <div class="custom-input-group password-group">
+        <div class="label-and-toggle-row">
+          <label class="static-label" for="password-input">Password</label>
+          <a class="password-toggle-link" (click)="togglePasswordVisibility()">
+            <mat-icon>
+              {{ hidePassword ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+            {{ hidePassword ? 'Unhide' : 'Hide' }}
+          </a>
+        </div>
+        <mat-form-field appearance="outline" class="login-field">
+          <input matInput formControlName="password" id="password-input" [type]="hidePassword ? 'password' : 'text'" required> 
+        </mat-form-field>
+        <mat-error *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched" class="custom-error">
+          Password is required.
+        </mat-error>
+      </div>
+      
+      <button mat-flat-button color="primary" type="submit" [disabled]="loginForm.invalid" class="login-button">
+        LOGIN
+      </button>
+      <button mat-flat-button color="primary" type="submit" class="sso-button">
+        Login via SSO
+      </button>
+    </form>
+  </div>
+</div>

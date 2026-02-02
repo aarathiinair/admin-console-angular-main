@@ -1,0 +1,53 @@
+<h2 mat-dialog-title class="dialog-title">{{ data ? 'Edit' : 'Add' }} Webhook Mapping</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="form" class="webhook-form">
+    
+    <div class="input-group">
+      <input 
+        id="channel-name"
+        formControlName="channel_name" 
+        type="text"
+        placeholder="Channel Name (e.g. IT-Alerts)"
+      >
+      <div 
+        *ngIf="form.get('channel_name')?.touched && form.get('channel_name')?.hasError('required')" 
+        class="error-message">
+        Channel name is required.
+      </div>
+    </div>
+    
+    <div class="input-group">
+      <input 
+        id="webhook-url"
+        formControlName="webhook_url" 
+        type="text"
+        placeholder="Webhook URL (https://...)"
+      >
+      <div 
+        *ngIf="form.get('webhook_url')?.touched && form.get('webhook_url')?.hasError('required')" 
+        class="error-message">
+        Webhook URL is required.
+      </div>
+      <div 
+        *ngIf="form.get('webhook_url')?.touched && form.get('webhook_url')?.hasError('pattern')" 
+        class="error-message">
+        Invalid URL format (must start with http/https).
+      </div>
+    </div>
+    
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button class="cancel-button" (click)="onCancel()">CANCEL</button>
+  <button 
+    mat-flat-button 
+    color="primary" 
+    class="save-button"
+    [disabled]="form.invalid"
+    (click)="onSave()"
+  >
+    SAVE
+  </button>
+</mat-dialog-actions>

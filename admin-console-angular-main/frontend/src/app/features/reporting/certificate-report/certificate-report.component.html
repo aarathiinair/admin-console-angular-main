@@ -1,0 +1,132 @@
+<div class="cert-report-wrapper">
+    <form [formGroup]="filterForm" (ngSubmit)="fetchData()">
+        <div class="filters-grid">
+            
+            <div class="form-field-wrapper">
+                <label class="static-input-label">Start Date (Expiry)</label>
+                <mat-form-field appearance="outline" class="custom-form-field">
+                    <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+                    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startPicker></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="form-field-wrapper">
+                <label class="static-input-label">End Date (Expiry)</label>
+                <mat-form-field appearance="outline" class="custom-form-field">
+                    <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+                    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endPicker></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="form-field-wrapper">
+                <label class="static-input-label">Status</label>
+                <mat-form-field appearance="outline" class="custom-form-field">
+                    <mat-select formControlName="status">
+                        <mat-option value="">All Statuses</mat-option>
+                        <mat-option *ngFor="let s of statusOptions" [value]="s">{{s}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="form-field-wrapper">
+                <label class="static-input-label">Responsible Group</label>
+                <mat-form-field appearance="outline" class="custom-form-field">
+                    <mat-select formControlName="responsibleGroup">
+                        <mat-option value="">All Groups</mat-option>
+                        <mat-option *ngFor="let t of responsibleGroupOptions" [value]="t">{{t}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+        </div>
+
+        <div *ngIf="filterForm.hasError('dateRangeInvalid')" class="error-message">
+            <mat-icon>error_outline</mat-icon>
+            <span>Start Date cannot be greater than End Date.</span>
+        </div>
+
+        <div class="actions-row">
+            <button mat-raised-button color="primary" type="submit" class="fetch-button" 
+                    [disabled]="isLoading"
+                    [class.faded-disabled]="filterForm.hasError('dateRangeInvalid')">
+                <mat-icon>search</mat-icon> Fetch Report Data
+            </button>
+            
+            <button mat-raised-button color="accent" type="button" class="download-button" 
+                    (click)="onDownload()" 
+                    [disabled]="isLoading || totalRows === 0"
+                    [class.faded-disabled]="filterForm.hasError('dateRangeInvalid')">
+                <mat-icon>download</mat-icon> Download Report (CSV)
+            </button>
+        </div>
+    </form>
+
+    <div class="mat-elevation-z8 report-table">
+        <mat-table [dataSource]="dataSource" matSort (matSortChange)="handleSortChange($event)">
+
+            <ng-container matColumnDef="certificate_name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="certificate_name">Certificate Name</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.certificate_name }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="expiration_date">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="expiration_date">Expiration Date</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.expiration_date | date:'mediumDate' }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="calculated_status">
+                <mat-header-cell *matHeaderCellDef mat-sort-header="calculated_status">Status</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <span class="status-badge" [ngClass]="row.calculated_status.toLowerCase().replace('_', '-')">
+                        {{ row.calculated_status }}
+                    </span>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="responsible_group">
+                <mat-header-cell *matHeaderCellDef>Responsible Group</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.responsible_group }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="teams_channel">
+                <mat-header-cell *matHeaderCellDef>Teams Channel</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.teams_channel }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.description || '-' }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="usage">
+                <mat-header-cell *matHeaderCellDef>Usage</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.usage || '-' }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="jira_ticket_id">
+                <mat-header-cell *matHeaderCellDef>Jira Ref</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.jira_ticket_id || '-' }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="effected_users">
+                <mat-header-cell *matHeaderCellDef>Affected Users</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{ row.effected_users || '-' }}</mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+            <ng-container *ngIf="!isLoading && totalRows === 0">
+                <mat-footer-row *matFooterRowDef="['noData']" class="mat-row-no-data">
+                    <mat-footer-cell *matFooterCellDef [attr.colspan]="displayedColumns.length">
+                        No certificates found.
+                    </mat-footer-cell>
+                </mat-footer-row>
+            </ng-container>
+        </mat-table>
+
+        <mat-paginator [length]="totalRows" [pageSize]="currentPageSize" [pageSizeOptions]="[10, 20, 50]" (page)="handlePageChange($event)" showFirstLastButtons></mat-paginator>
+    </div>
+</div>

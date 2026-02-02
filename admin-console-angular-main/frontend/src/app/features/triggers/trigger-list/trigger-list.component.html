@@ -1,0 +1,82 @@
+<div class="trigger-list-page">
+  <h1 class="page-title">Trigger List</h1>
+  
+  <div class="filter-row">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-select [(ngModel)]="filterCategory" (selectionChange)="applyFilter()" panelClass="trigger-filter-panel"
+        placeholder="Category">
+        <mat-option value="">All Categories</mat-option>
+        <mat-option *ngFor="let option of categoryOptions" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-select [(ngModel)]="filterPriority" (selectionChange)="applyFilter()" panelClass="trigger-filter-panel"
+        placeholder="Priority">
+        <mat-option value="">All Priorities</mat-option>
+        <mat-option *ngFor="let option of priorityOptions" [value]="option">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-select [(ngModel)]="filterActionable" (selectionChange)="applyFilter()" panelClass="trigger-filter-panel"
+        placeholder="Type">
+        <mat-option value="">All Types</mat-option>
+        <mat-option value="Actionable">Actionable</mat-option>
+        <mat-option value="Informational">Informational</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field search-field">
+      <input matInput [(ngModel)]="filterTeam" (keyup)="applyFilter()" placeholder="Search Team or Dept...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+        <th mat-header-cell *matHeaderCellDef> {{ column.replace('_', ' ') | titlecase }} </th>
+        <td mat-cell *matCellDef="let element">
+          
+          <ng-container *ngIf="column !== 'actions' && column !== 'recommended_action'">
+            {{ element[column] }}
+          </ng-container>
+
+          <ng-container *ngIf="column === 'recommended_action'">
+            <span class="truncate-text" [title]="element[column]">
+              {{ element[column] }}
+            </span>
+          </ng-container>
+
+          <div *ngIf="column === 'actions'" class="action-buttons">
+            <button mat-icon-button class="edit-icon-button" (click)="openTriggerDialog(element)" title="Edit Trigger">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div *ngIf="dataSource.filteredData.length === 0" class="empty-state">
+      No triggers match the current filters.
+    </div>
+  </div>
+
+  <div class="add-button-paginator-row">
+    <button mat-flat-button class="add-trigger-button" (click)="openTriggerDialog()">
+      ADD TRIGGER
+    </button>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" [pageSize]="10" showFirstLastButtons
+      aria-label="Select page of triggers">
+    </mat-paginator>
+  </div>
+</div>
